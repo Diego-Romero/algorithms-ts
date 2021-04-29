@@ -3,13 +3,16 @@
  * If there is none return -1, you are allowed to mutate the input array
  */
 
-export function firstDuplicateValue(array: number[]) {
-  for (let number of array) {
-    const absValue = Math.abs(number)
-    if (array[absValue - 1] < 0) return absValue;
-    array[number - 1] = number * - 1;
+export function firstDuplicateValue(array: number[]): number {
+  for (let i = 0; i < array.length; i++) {
+    const element = array[i];
+    const absValue = Math.abs(element)
+    if (array[absValue - 1] < 0) return absValue; // if the number is negative, means that we have flipped it before
+    const inverted = array[absValue - 1] * -1;
+    array[absValue - 1] = inverted;
+  //  console.log(array, absValue, inverted) 
   }
-  return array;
+  return -1;
 }
 
 describe('first duplicate value in array', () => {
