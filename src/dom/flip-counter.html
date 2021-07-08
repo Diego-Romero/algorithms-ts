@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flip Counter</title>
+    <style>
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+      }
+      .number {
+        background-color: grey;
+        color: white;
+        padding: 10px;
+        margin-left: 5px;
+        border-radius: 25%;
+        font-size: x-large;
+      }
+    </style>
+</head>
+<body>
+<div class="container">
+  <div id="first" class="number">0</div>
+  <div id="second" class="number">0</div>
+</div>
+<script>
+  var CLEAR_INTERVAL = 60;
+  var counter = 0;
+  var firstDigit = document.getElementById('first');
+  var secondDigit = document.getElementById('second');
+  console.log(firstDigit, secondDigit)
+
+  var interval = setInterval(function() {
+    counter++;
+    var stringified = counter.toString();
+    if (stringified.length < 2) {
+      secondDigit.innerText = counter;
+    } else {
+      firstDigit.innerText = stringified[0];
+      secondDigit.innerText = stringified[1];
+    }
+    if (counter === CLEAR_INTERVAL) clearInterval(interval);
+  }, 1000)
+</script>
+</body>
+</html>
+

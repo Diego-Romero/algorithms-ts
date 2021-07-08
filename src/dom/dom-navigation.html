@@ -1,0 +1,20 @@
+<html>
+  <body>
+    <div>users</div>
+    <ul>
+      <li>diego</li>
+      <li>romero</li>
+    </ul>
+  </body>
+  <script>
+    var body = document.body;
+    var div = body.children[0];
+    console.log(div.nextSibling)
+    var list = body.children[1]
+    console.log(div, typeof div)
+    console.log(list, typeof list)
+    list.onclick = function() {
+      console.log('clicked list')
+    }
+  </script>
+</html>
