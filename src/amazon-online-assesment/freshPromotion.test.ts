@@ -1,6 +1,10 @@
 /**
 
-Amazon is running a promotion in which customers receive prizes for purchasing a secret combination of fruits. The combination will change each day, and the team running the promotion wants to use a code list to make it easy to change the combination. The code list contains groups of fruits. Both the order of the groups within the code list and the order of the fruits within the groups matter. However, between the groups of fruits, any number, and type of fruit is allowable. The term "anything" is used to allow for any type of fruit to appear in that location within the group.
+Amazon is running a promotion in which customers receive prizes for purchasing a secret combination of fruits. 
+The combination will change each day, and the team running the promotion wants to use a code list to make it easy to change the combination. 
+The code list contains groups of fruits. Both the order of the groups within the code list and the order of the fruits within the groups matter. 
+However, between the groups of fruits, any number, and type of fruit is allowable. 
+The term "anything" is used to allow for any type of fruit to appear in that location within the group.
 
 Consider the following secret code list: [[apple, apple], [banana, anything, banana]]
 Based on the above secret code list, a customer who made either of the following purchases would win the prize:
@@ -53,34 +57,30 @@ Explanation:
 The customer is not a winner as the first 2 fruits form group 1, all three fruits would form group 2, but can't because it would contain all fruits of group 1.
  */
 
-// brute force solution in O(N * M), N is code list and M is shopping cart
 function freshPromotion(codeList: string[][], shoppingCart: string[]): number {
-  console.log(codeList);
+  // brute force approach in N * M, N = codelist M = shoppingCart
+  // using two pointers, we check if we find the start of the code list, then we iterate through each of the code list and current index of shopping cart, see if they match
   if (codeList.length === 0) return 1;
-  let result = 0;
-  const flatten = codeList.reduce((prev, cur) => [...prev, ...cur], []);
-  console.log(flatten);
+  const flatten: string[] = [];
+  codeList.forEach((list) => list.forEach((e) => flatten.push(e)));
+
   for (let i = 0; i < shoppingCart.length; i++) {
     const item = shoppingCart[i];
     if (item === flatten[0]) {
-      attempt(i);
+      // if we get a match on the first index
+      let p1 = 0;
+      let p2 = i;
+      while (p1 < flatten.length && p2 < shoppingCart.length) {
+        if (flatten[p1] !== shoppingCart[p2] && flatten[p1] !== "anything")
+          break;
+        p1++;
+        p2++;
+      }
+      if (p1 === flatten.length) return 1;
     }
   }
 
-  function attempt(i: number) {
-    let j = 0;
-    console.log(shoppingCart.length, flatten.length);
-    while (i < shoppingCart.length && j < flatten.length) {
-      console.log(i, j, shoppingCart[i], flatten[j], shoppingCart[i] === flatten[i]);
-      if (shoppingCart[i].localeCompare(flatten[i]) === 0 || flatten[i] === "anything") {
-        i++;
-        j++;
-      } else break;
-    }
-    if (i === shoppingCart.length && j === flatten.length) result = 1;
-  }
-
-  return result;
+  return 0;
 }
 
 describe("fresh Promotion", () => {

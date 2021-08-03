@@ -1,51 +1,44 @@
 export function solveSudoku(board: number[][]) {
-  let solved: number[][] = board;
+  let result: number[][] = board;
 
-  function recurse(board: number[][]) {
-    console.table(board);
-    for (let row = 0; row < board.length; row++) {
-      const rowNums: number[] = board[row].filter((n) => n != 0);
-      for (let col = 0; col < board[row].length; col++) {
-        if (board[row][col] === 0) {
-          const colNums: number[] = getColNums(col, board);
-          const availableNums = getAvailableNums(rowNums, colNums);
-          if (availableNums.length) {
-            const previousValue = board[row][col];
-            for (let num of availableNums) {
-              board[row][col] = num;
-              recurse(board);
-            }
-            board[row][col] = previousValue;
-          } else {
+  function recurse(r: number, c: number, sudoku: number[][]) {
+    for (let row = r; row < 9; row++) {
+      for (let col = c; col < 9; col++) {
+        if (sudoku[row][col] === 0) {
+          // get available numbers to try
+          const rowNums = sudoku[row].filter((n) => n !== 0);
+          const colNums = sudoku.map((row) => row[col]).filter((n) => n !== 0);
+          // need to also get square numbers
+          const set = new Set([...rowNums, ...colNums]);
+          let possibleNums: number[] = [];
+          console.table(sudoku);
+          for (let i = 1; i <= 9; i++) if (!set.has(i)) possibleNums.push(i);
+          console.log(possibleNums, row, col);
+          if (possibleNums.length === 0) {
+            // sudoku[row][col] = 0;
             return;
+          }
+          // console.log(set, rowNums, colNums, possibleNums)
+          for (let possible of possibleNums) {
+            sudoku[row][col] = possible;
+            if (row === 8 && col === 8) {
+              console.log("found it!");
+              console.log(sudoku);
+              result = sudoku;
+            }
+            recurse(row, col, sudoku);
           }
         }
       }
     }
   }
 
-  recurse(board);
-
-  return solved;
-}
-function getColNums(col: number, board: number[][]) {
-  const nums: number[] = [];
-  for (let row = 0; row < board.length; row++) {
-    const num = board[row][col];
-    if (num !== 0) nums.push(num);
+  function getSquareNumbers(row: number, col: number, sudoku: number[][]) {
+    
   }
-  return nums;
-}
+  recurse(0, 0, board);
 
-function getAvailableNums(rowNums: number[], colNums: number[]) {
-  const set = new Set(rowNums);
-  colNums.forEach((n) => set.add(n));
-  const available: number[] = [];
-  for (let i = 1; i < 10; i++) {
-    if (!set.has(i)) available.push(i);
-  }
-
-  return available;
+  return result;
 }
 
 /**
