@@ -6,8 +6,7 @@ export function minimumPassesOfMatrix(matrix: number[][]) {
       if (matrix[row][col] > 0) queue.push([row, col]);
     }
   }
-  console.log(queue);
-  console.table(matrix);
+
   while (queue.length) {
     const length = queue.length;
     for (let i = 0; i < length; i++) {
