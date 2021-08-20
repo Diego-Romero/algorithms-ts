@@ -133,7 +133,7 @@ describe("fresh Promotion", () => {
 
   test("example 4", () => {
     const codeList = [
-      ["apple", "apple"],
+      ["money", "mike"],
       ["banana", "anything", "banana"],
     ];
     const shoppingCart = ["apple", "apple", "banana", "banana"];
