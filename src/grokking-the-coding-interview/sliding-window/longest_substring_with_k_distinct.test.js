@@ -43,34 +43,66 @@ max = 4
 
 - while we have less than 2 distinct, save and move right
 - when distinct > k, move left until distinct is <= k
+- We could optimise by only storing k numbers in the object
+*/
+// const longest_substring_with_k_distinct = function (str, k) {
+//   let longest = 0,
+//     length = 0,
+//     distinct = 0,
+//     left = -1,
+//     right = -1;
+//   const charCount = {};
+
+//   while (right < str.length) {
+// 		if (distinct <= k) {
+// 			// record and move right
+//       right++;
+// 			const char = str[right];
+//       charCount[char] ? charCount[char]++ : (charCount[char] = 1);
+//       if (charCount[char] === 1) distinct++; // whenever we add a new char, we increase distinct count
+//       length++;
+//       if (distinct <= k) longest = Math.max(longest, length);
+//     } else {
+// 			left++;
+// 			const char = str[left];
+//       charCount[char]--;
+//       if (charCount[char] === 0) distinct--;
+//       length--;
+//     }
+//   }
+
+//   return longest;
+// };
+
+/*
+{a: 2, c: 1}
+   l
+     r
+ araaci
+ 012345
 */
 const longest_substring_with_k_distinct = function (str, k) {
-  let longest = 0,
-    length = 0,
-    distinct = 0,
-    left = -1,
-    right = -1;
-  const charCount = {};
+  let charFreq = {};
+	let left = 0;
+	let longest = 0;
+	
+	for (let right = 0; right < str.length; right++) {
+		const rightChar = str[right];
+		if (!charFreq[rightChar]) {
+			charFreq[rightChar] = 1;
+		} else charFreq[rightChar]++;
 
-  while (right < str.length) {
-		if (distinct <= k) {
-			// record and move right
-      right++;
-			const char = str[right];
-      charCount[char] ? charCount[char]++ : (charCount[char] = 1);
-      if (charCount[char] === 1) distinct++; // whenever we add a new char, we increase distinct count
-      length++;
-      if (distinct <= k) longest = Math.max(longest, length);
-    } else {
-			left++;
-			const char = str[left];
-      charCount[char]--;
-      if (charCount[char] === 0) distinct--;
-      length--;
-    }
-  }
+		while (Object.keys(charFreq).length > k) {
+				const leftChar = str[left];
+				charFreq[leftChar] -= 1;
+        if (charFreq[leftChar] === 0) delete charFreq[leftChar];
+				left++;
+		}
 
-  return longest;
+		longest = Math.max(longest, right - left + 1);
+	}
+
+	return longest;
 };
 
 describe("longest substring with k distinct", () => {
