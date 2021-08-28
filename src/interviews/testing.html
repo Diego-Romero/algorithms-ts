@@ -1,0 +1,18 @@
+<html>
+  <head> </head>
+  <body>
+    <form>
+      <input name="myForm" type="password" onkeyup="checkPass()" />
+      Strength:<span id="mylocation"> no strength</span>
+    </form>
+  </body>
+
+  <script>
+    function checkPass() {
+      var msg = "";
+      if (document.getElementsByName("myForm").length) msg = "password added";
+      else msg = "no password added";
+      document.getElementById("myLocation").innerText = msg;
+    }
+  </script>
+</html>

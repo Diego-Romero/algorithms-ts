@@ -18,6 +18,5 @@ function filterInput(array: any[]): any[] {
   return array;
 }
 
-
 // stand my ground regarding asking clarifying questions, have the specifications pinned down.
 // consider the naive approach, is better to finish it in a naive way, than not finishing it elegantly.
