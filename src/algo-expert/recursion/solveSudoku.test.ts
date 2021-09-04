@@ -33,13 +33,6 @@ export function solveSudoku(board: number[][]) {
     }
   }
 
-  function getSquareNumbers(row: number, col: number, sudoku: number[][]) {
-    
-  }
-  recurse(0, 0, board);
-
-  return result;
-}
 
 /**
 the input is an always solvable Sudoku puzzle
