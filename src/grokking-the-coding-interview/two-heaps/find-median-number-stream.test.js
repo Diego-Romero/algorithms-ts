@@ -91,40 +91,42 @@ function MIN_HEAP_FUNC(a, b) {
 }
 
 class MedianOfAStream {
-  smallNumbers;
-  largeNumbers;
   constructor() {
-    this.smallNumbers = new Heap([], MAX_HEAP_FUNC);
-    this.largeNumbers = new Heap([], MIN_HEAP_FUNC);
-  }
-  // N log N, as we are inserting N numbers
-  insert_num(num) {
-    // if the num is larger than the one at large insert there, then re balance
-    // else store in small numbers and rebalance
-    if (num > this.largeNumbers.peek()) {
-      this.largeNumbers.insert(num);
-      if (this.largeNumbers.heap.length > this.smallNumbers.heap.length) {
-        this.smallNumbers.insert(this.largeNumbers.remove());
-      }
-    } else {
-      this.smallNumbers.insert(num);
-      if (this.smallNumbers.heap.length >= this.largeNumbers.heap.length + 2) {
-        this.largeNumbers.insert(this.smallNumbers.remove()); // now is just one bigger
-      }
-    }
-    console.log(this.smallNumbers.heap, this.largeNumbers.heap);
+    this.low = new Heap([], MAX_HEAP_FUNC);
+    this.high = new Heap([], MIN_HEAP_FUNC);
   }
 
-  // 2 options, either they are same length, or small numbers is larger
-  find_median() {
-    if (this.smallNumbers.heap.length === this.largeNumbers.heap.length) {
-      return (this.smallNumbers.peek() + this.largeNumbers.peek()) / 2;
-    } else {
-      return this.smallNumbers.peek();
+  // insert numbers into the min Heap, re balance, when the diff is bigger than 2
+  // this should take Log N to insert and re balance
+  insert_num(num) {
+    if (this.low.heap.length === 0 || this.low.peek() >= num)
+      this.low.insert(num);
+    else this.high.insert(num);
+
+    this.balanceHeaps();
+  }
+
+  balanceHeaps() {
+    // if the high heap has more, then put into the smaller
+    if (this.low.heap.length > this.high.length + 1) {
+      this.high.insert(this.low.remove());
+    } else if (this.low.length < this.high.length) {
+      this.low.insert(this.high.remove());
     }
+  }
+
+  // this should take O(1) retrieval time
+  find_median(self) {
+    // 2 ways to find the median, it could be either that they are the same length, or it is the top of the low heap
+    const lowTop = this.low.peek();
+    const highTop = this.high.peek();
+    if (this.low.heap.length === this.high.heap.length)
+      return (highTop + lowTop) / 2;
+    return lowTop;
   }
 }
 
+// insert complexity will be Log of N, retrieve will be O(1) and space will be O(N)
 var medianOfAStream = new MedianOfAStream();
 medianOfAStream.insert_num(3);
 medianOfAStream.insert_num(1);
