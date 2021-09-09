@@ -44,6 +44,7 @@ There are other valid topological ordering of the graph too.
 
 /*
 In order to solve this I need 2 data structures, one holding an adjacency list, which is each vertex containing a list with all its children 
+O(V + E) time and space
 */
 const topological_sort = function (vertices, edges) {
   const sortedOrder = [];
