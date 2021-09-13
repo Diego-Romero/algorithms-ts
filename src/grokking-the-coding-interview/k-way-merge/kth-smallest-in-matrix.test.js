@@ -87,51 +87,52 @@ function MAX_HEAP_FUNC(a, b) {
   return a > b;
 }
 function MIN_HEAP_FUNC(a, b) {
-  return a[0] < b[0];
+  return a < b;
 }
 
 /*
+
 Problem Statement#
-Given ‘M’ sorted arrays, find the K’th smallest number among all the arrays.
+Given an N * NN∗N matrix where each row and column is sorted in ascending order, find the Kth smallest element in the matrix.
 
 Example 1:
 
-Input: L1=[2, 6, 8], L2=[3, 6, 7], L3=[1, 3, 4], K=5
-Output: 4
-Explanation: The 5th smallest number among all the arrays is 4, this can be verified from 
-the merged list of all the arrays: [1, 2, 3, 3, 4, 6, 6, 7, 8]
-Example 2:
-
-Input: L1=[5, 8, 9], L2=[1, 7], K=3
+Input: Matrix=[
+    [2, 6, 8], 
+    [3, 7, 10],
+    [5, 8, 11]
+  ], 
+  K=5
 Output: 7
-Explanation: The 3rd smallest number among all the arrays is 7.
+Explanation: The 5th smallest number in the matrix is 7.
 
 */
 
-// insert an element from each list into a min heap
-// keep reducing K, the amount of elements I've inserted, similar to k way merge, where we keep track of the list index
-// whenever count === 0, that means that the number is the last number in the heap
-// O(K log M) where M is the total number of elements in all the lists
-// O(K) space
-const find_Kth_smallest = function (lists, k) {
-  const minHeap = new Heap([], MIN_HEAP_FUNC);
-
-  // there is a test case where the k is smaller than lists.length
-  for (let listIndex = 0; listIndex < lists.length; listIndex++) {
-    const value = lists[listIndex][0];
-    minHeap.insert([value, 0, lists[listIndex]]);
+/*
+Could do K way merge, adding the first element from each array
+time: O(K log N)
+space: O(K)
+*/
+const find_Kth_smallest = function (matrix, k) {
+  const heap = new Heap([], MIN_HEAP_FUNC);
+  for (let i = 0; i < matrix.length; i++) {
+    const row = matrix[i];
+    const first = row[0];
+    heap.insert([first, 0, row]);
   }
-  console.log(minHeap);
 
-  let numberCount = 0;
-  let result = minHeap.peek()[0];
-  while (minHeap.heap.length > 0) {
-    const [number, i, list] = minHeap.remove();
-    numberCount++;
-    result = number;
-    if (numberCount === k) break;
-    if (list.length > i + 1) {
-      minHeap.insert([list[i + 1], i + 1, list]);
+  let count = 0;
+  let result = heap.peek()[0];
+  while (heap.heap.length > 0) {
+    count++;
+    // insert the current one
+    const [value, index, row] = heap.remove();
+    console.log(value, count, heap);
+    result = value;
+    if (count === k) break;
+    const currentNext = row[index + 1];
+    if (currentNext) {
+      heap.insert([currentNext, index + 1, row]);
     }
   }
 
@@ -142,8 +143,8 @@ console.log(
   `Kth smallest number is: ${find_Kth_smallest(
     [
       [2, 6, 8],
-      [3, 6, 7],
-      [1, 3, 4],
+      [3, 7, 10],
+      [5, 8, 11],
     ],
     5
   )}`

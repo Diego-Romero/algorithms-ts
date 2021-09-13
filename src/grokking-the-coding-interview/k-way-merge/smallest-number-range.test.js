@@ -87,64 +87,61 @@ function MAX_HEAP_FUNC(a, b) {
   return a > b;
 }
 function MIN_HEAP_FUNC(a, b) {
-  return a[0] < b[0];
+  return a < b;
 }
 
 /*
 Problem Statement#
-Given ‘M’ sorted arrays, find the K’th smallest number among all the arrays.
+Given ‘M’ sorted arrays, find the smallest range that includes at least one number from each of the ‘M’ lists.
 
 Example 1:
 
-Input: L1=[2, 6, 8], L2=[3, 6, 7], L3=[1, 3, 4], K=5
-Output: 4
-Explanation: The 5th smallest number among all the arrays is 4, this can be verified from 
-the merged list of all the arrays: [1, 2, 3, 3, 4, 6, 6, 7, 8]
+Input: L1=[1, 5, 8], L2=[4, 12], L3=[7, 8, 10]
+Output: [4, 7]
+Explanation: The range [4, 7] includes 5 from L1, 4 from L2 and 7 from L3.
 Example 2:
 
-Input: L1=[5, 8, 9], L2=[1, 7], K=3
-Output: 7
-Explanation: The 3rd smallest number among all the arrays is 7.
-
+Input: L1=[1, 9], L2=[4, 12], L3=[7, 10, 16]
+Output: [9, 12]
+Explanation: The range [9, 12] includes 9 from L1, 12 from L2 and 10 from L3.
 */
 
-// insert an element from each list into a min heap
-// keep reducing K, the amount of elements I've inserted, similar to k way merge, where we keep track of the list index
-// whenever count === 0, that means that the number is the last number in the heap
-// O(K log M) where M is the total number of elements in all the lists
-// O(K) space
-const find_Kth_smallest = function (lists, k) {
-  const minHeap = new Heap([], MIN_HEAP_FUNC);
+// put all the numbers in an min heap
+// do K way merge,remove the smallest element from the the heap and iterate the current elements in the heap, record that range
 
-  // there is a test case where the k is smaller than lists.length
-  for (let listIndex = 0; listIndex < lists.length; listIndex++) {
-    const value = lists[listIndex][0];
-    minHeap.insert([value, 0, lists[listIndex]]);
+/*
+solution: keep track of the largest number we have inserted, then pop from the minHeap, recording the current smallest and largest
+*/
+const find_smallest_range = function (lists) {
+  const heap = new Heap([], MIN_HEAP_FUNC);
+  let max = Infinity;
+  let smallest = Infinity;
+  let result = [];
+  for (let i = 0; i < lists.length; i++) {
+    const array = lists[i];
+    const first = array[0];
+    heap.insert([first, 0, array]);
+    max = Math.max(max, first);
   }
-  console.log(minHeap);
 
-  let numberCount = 0;
-  let result = minHeap.peek()[0];
-  while (minHeap.heap.length > 0) {
-    const [number, i, list] = minHeap.remove();
-    numberCount++;
-    result = number;
-    if (numberCount === k) break;
-    if (list.length > i + 1) {
-      minHeap.insert([list[i + 1], i + 1, list]);
+  while (heap.heap.length > 0) {
+    // go through all the elements in the heap
+    const [min, index, array] = heap.remove();
+    const distance = max - min;
+    if (distance < max) {
+      smallest = distance;
+      result = [min, max];
     }
   }
 
-  return result;
+  // TODO: Write your code here
+  return [-1, -1];
 };
 
 console.log(
-  `Kth smallest number is: ${find_Kth_smallest(
-    [
-      [2, 6, 8],
-      [3, 6, 7],
-      [1, 3, 4],
-    ],
-    5
-  )}`
+  `Smallest range is: ${find_smallest_range([
+    [1, 5, 8],
+    [4, 12],
+    [7, 8, 10],
+  ])}`
 );

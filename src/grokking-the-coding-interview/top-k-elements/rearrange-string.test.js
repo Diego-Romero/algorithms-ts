@@ -84,67 +84,68 @@ class Heap {
 }
 
 function MAX_HEAP_FUNC(a, b) {
-  return a > b;
+  return a[0] > b[0];
 }
 function MIN_HEAP_FUNC(a, b) {
-  return a[0] < b[0];
+  return a < b;
 }
 
 /*
 Problem Statement#
-Given ‘M’ sorted arrays, find the K’th smallest number among all the arrays.
+Given a string, find if its letters can be rearranged in such a way that no two same characters come next to each other.
 
 Example 1:
 
-Input: L1=[2, 6, 8], L2=[3, 6, 7], L3=[1, 3, 4], K=5
-Output: 4
-Explanation: The 5th smallest number among all the arrays is 4, this can be verified from 
-the merged list of all the arrays: [1, 2, 3, 3, 4, 6, 6, 7, 8]
+Input: "aappp"
+Output: "papap"
+Explanation: In "papap", none of the repeating characters come next to each other.
 Example 2:
 
-Input: L1=[5, 8, 9], L2=[1, 7], K=3
-Output: 7
-Explanation: The 3rd smallest number among all the arrays is 7.
+Input: "Programming"
+Output: "rgmrgmPiano" or "gmringmrPoa" or "gmrPagimnor", etc.
+Explanation: None of the repeating characters come next to each other.
+Example 3:
 
+Input: "aapa"
+Output: ""
+Explanation: In all arrangements of "aapa", atleast two 'a' will come together e.g., "apaa", "paaa".
 */
 
-// insert an element from each list into a min heap
-// keep reducing K, the amount of elements I've inserted, similar to k way merge, where we keep track of the list index
-// whenever count === 0, that means that the number is the last number in the heap
-// O(K log M) where M is the total number of elements in all the lists
-// O(K) space
-const find_Kth_smallest = function (lists, k) {
-  const minHeap = new Heap([], MIN_HEAP_FUNC);
-
-  // there is a test case where the k is smaller than lists.length
-  for (let listIndex = 0; listIndex < lists.length; listIndex++) {
-    const value = lists[listIndex][0];
-    minHeap.insert([value, 0, lists[listIndex]]);
+/*
+put the frequency count in a min heap
+*/
+const rearrange_string = function (str) {
+  const freq = {};
+  const heap = new Heap([], MAX_HEAP_FUNC);
+  for (let c of str.split("")) {
+    if (freq[c]) freq[c]++;
+    else freq[c] = 1;
   }
-  console.log(minHeap);
+  for (let [k, v] of Object.entries(freq)) heap.insert([v, k]);
+  let result = "";
 
-  let numberCount = 0;
-  let result = minHeap.peek()[0];
-  while (minHeap.heap.length > 0) {
-    const [number, i, list] = minHeap.remove();
-    numberCount++;
-    result = number;
-    if (numberCount === k) break;
-    if (list.length > i + 1) {
-      minHeap.insert([list[i + 1], i + 1, list]);
+  const queue = [];
+  // iterate through every char that has a valid count
+  while (heap.heap.length > 0) {
+    // go through every element of the heap, and put all distinct in a queue
+    const length = heap.heap.length;
+    for (let i = 0; i < length; i++) {
+      const [count, char] = heap.remove();
+      if (char === result[result.length - 1]) return ""; // if we had to put the same char together, the string is invalid
+      result += char;
+      if (count - 1 > 0) {
+        queue.push([count - 1, char]);
+      }
+    }
+
+    while (queue.length > 0) {
+      heap.insert(queue.shift());
     }
   }
 
   return result;
 };
 
-console.log(
-  `Kth smallest number is: ${find_Kth_smallest(
-    [
-      [2, 6, 8],
-      [3, 6, 7],
-      [1, 3, 4],
-    ],
-    5
-  )}`
-);
+console.log(`Rearranged string: ${rearrange_string("aappp")}`); // papap
+console.log(`Rearranged string: ${rearrange_string("Programming")}`); // rgmoaPingrmg
+console.log(`Rearranged string: ${rearrange_string("aapa")}`); // "" invalid

@@ -84,67 +84,55 @@ class Heap {
 }
 
 function MAX_HEAP_FUNC(a, b) {
-  return a > b;
+  return a[0] > b[0];
 }
 function MIN_HEAP_FUNC(a, b) {
-  return a[0] < b[0];
+  return a < b;
 }
 
 /*
 Problem Statement#
-Given ‘M’ sorted arrays, find the K’th smallest number among all the arrays.
+Given a string, sort it based on the decreasing frequency of its characters.
 
 Example 1:
 
-Input: L1=[2, 6, 8], L2=[3, 6, 7], L3=[1, 3, 4], K=5
-Output: 4
-Explanation: The 5th smallest number among all the arrays is 4, this can be verified from 
-the merged list of all the arrays: [1, 2, 3, 3, 4, 6, 6, 7, 8]
+Input: "Programming"
+Output: "rrggmmPiano"
+Explanation: 'r', 'g', and 'm' appeared twice, so they need to appear before any other character.
 Example 2:
 
-Input: L1=[5, 8, 9], L2=[1, 7], K=3
-Output: 7
-Explanation: The 3rd smallest number among all the arrays is 7.
+Input: "abcbab"
+Output: "bbbaac"
+Explanation: 'b' appeared three times, 'a' appeared twice, and 'c' appeared only once.
 
 */
 
-// insert an element from each list into a min heap
-// keep reducing K, the amount of elements I've inserted, similar to k way merge, where we keep track of the list index
-// whenever count === 0, that means that the number is the last number in the heap
-// O(K log M) where M is the total number of elements in all the lists
-// O(K) space
-const find_Kth_smallest = function (lists, k) {
-  const minHeap = new Heap([], MIN_HEAP_FUNC);
-
-  // there is a test case where the k is smaller than lists.length
-  for (let listIndex = 0; listIndex < lists.length; listIndex++) {
-    const value = lists[listIndex][0];
-    minHeap.insert([value, 0, lists[listIndex]]);
+const sort_character_by_frequency = function (str) {
+  const freq = {};
+  const result = [];
+  const heap = new Heap([], MAX_HEAP_FUNC);
+  for (let char of str.split("")) {
+    if (freq[char]) freq[char]++;
+    else freq[char] = 1;
   }
-  console.log(minHeap);
+  for (let [k, v] of Object.entries(freq)) heap.insert([v, k]);
+  console.log(heap);
 
-  let numberCount = 0;
-  let result = minHeap.peek()[0];
-  while (minHeap.heap.length > 0) {
-    const [number, i, list] = minHeap.remove();
-    numberCount++;
-    result = number;
-    if (numberCount === k) break;
-    if (list.length > i + 1) {
-      minHeap.insert([list[i + 1], i + 1, list]);
-    }
+  while (heap.heap.length > 0) {
+    const [count, char] = heap.remove();
+    for (let i = 0; i < count; i++) result.push(char);
   }
 
-  return result;
+  return result.join("");
 };
 
 console.log(
-  `Kth smallest number is: ${find_Kth_smallest(
-    [
-      [2, 6, 8],
-      [3, 6, 7],
-      [1, 3, 4],
-    ],
-    5
+  `String after sorting characters by frequency: ${sort_character_by_frequency(
+    "Programming"
   )}`
 );
+// console.log(
+//   `String after sorting characters by frequency: ${sort_character_by_frequency(
+//     "abcbab"
+//   )}`
+// );
