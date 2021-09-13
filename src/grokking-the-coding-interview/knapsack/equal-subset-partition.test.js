@@ -65,11 +65,11 @@ const can_partition = function (array) {
     }
   }
 
-  // console.table(dp);
+  console.table(dp);
 
   return dp[array.length - 1][totalSum / 2];
 };
 
-console.log(`Can partition: ${can_partition([1, 2, 3, 4])}`); // true
+// console.log(`Can partition: ${can_partition([1, 2, 3, 4])}`); // true
 console.log(`Can partition: ${can_partition([1, 1, 3, 4, 7])}`); // true
-console.log(`Can partition: ${can_partition([2, 3, 4, 6])}`); // false
+// console.log(`Can partition: ${can_partition([2, 3, 4, 6])}`); // false
