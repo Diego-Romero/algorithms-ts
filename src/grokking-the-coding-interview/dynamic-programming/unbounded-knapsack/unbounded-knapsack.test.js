@@ -77,29 +77,28 @@ Given two integer arrays to represent weights and profits of ‘N’ items, we n
 
 // O(N * C) C being capacity, time | space
 let solveKnapsack = function (profits, weights, maxCapacity) {
-  const length = profits.length;
-  const dp = new Array(length).fill(new Array(maxCapacity + 1).fill(0));
-  // set up the tabular data in a way that we fill the first row first, with however many we can add
-  for (let c = 1; c <= maxCapacity; c++) {
-    if (weights[0] <= c) dp[0][c] = dp[0][c - weights[0]] + profits[0];
-  }
+  const dp = new Array(profits.length)
+    .fill(0)
+    .map(() => new Array(maxCapacity + 1).fill(0));
 
-  for (let i = 1; i < length; i++) {
-    const currentWeight = weights[i],
-      currentProfit = profits[i];
-    for (let c = 1; c <= maxCapacity; c++) {
-      // if the current weight < c, just copy
-      let profit1 = 0,
-        profit2 = 0;
-      profit1 = dp[i - 1][c];
-      if (currentWeight <= c) {
-        profit2 = currentProfit + dp[i][c - currentWeight];
+  for (let i = 0; i < profits.length; i++) {
+    const weight = weights[i];
+    const profit = profits[i];
+
+    for (let capacity = 1; capacity <= maxCapacity; capacity++) {
+      // 2 options, we either copy from the top
+      let p1 = 0,
+        p2 = 0;
+
+      if (i > 0) {
+        p1 = dp[i - 1][capacity];
       }
-      dp[i][c] = Math.max(profit1, profit2);
+      if (capacity >= weight) p2 = profit + dp[i][capacity - weight];
+
+      dp[i][capacity] = Math.max(p1, p2);
     }
   }
-
-  console.table(dp);
+  console.log(dp);
 
   return dp[profits.length - 1][maxCapacity];
 };

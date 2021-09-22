@@ -38,6 +38,7 @@ Explanation: The longest common substring is "ssp".
 //   return recurse(0, 0, 0);
 // };
 
+// O(N * M) time & space
 const findLCSLength = function (s1, s2) {
   const dp = Array(s1.length + 1)
     .fill(0)
