@@ -564,6 +564,13 @@
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
 
+"@types/line-reader@^0.0.34":
+  version "0.0.34"
+  resolved "https://snapchat.jfrog.io/snapchat/api/npm/npm-virtual/@types/line-reader/-/line-reader-0.0.34.tgz#f5b73305c5610aec62b10c2d7743f8788460960d"
+  integrity sha1-9bczBcVhCuxisQwtd0P4eIRglg0=
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "14.14.37"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
@@ -2396,6 +2403,11 @@ levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
+
+line-reader@^0.4.0:
+  version "0.4.0"
+  resolved "https://snapchat.jfrog.io/snapchat/api/npm/npm-virtual/line-reader/-/line-reader-0.4.0.tgz#17e44818da0ac335675ba300954f94ef670e66fd"
+  integrity sha1-F+RIGNoKwzVnW6MAlU+U72cOZv0=
 
 lines-and-columns@^1.1.6:
   version "1.1.6"
