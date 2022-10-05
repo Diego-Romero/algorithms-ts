@@ -35,19 +35,36 @@ Output: [], [1], [5], [3], [1,5], [1,3], [5,3], [1,5,3]
 // Solving it using a BFS approach
 // time will be O(N * 2 ^ N)
 // space will be O(2 ^ N) as at every step the total subsets doubles
+// const find_subsets = function (array) {
+//   const subsets = [[]]; // use a queue to solve it
+//   // add every number to the current Q
+//   for (let n of array) {
+//     const size = subsets.length;
+//     for (let i = 0; i < size; i++) {
+//       const subset = subsets[i];
+//       subsets.push([...subset, n]);
+//     }
+//   }
+
+//   // this will go in two ways, one with the empty and one with the current number
+//   return subsets;
+// };
+
 const find_subsets = function (array) {
-  const subsets = [[]]; // use a queue to solve it
-  // add every number to the current Q
-  for (let n of array) {
-    const size = subsets.length;
-    for (let i = 0; i < size; i++) {
-      const subset = subsets[i];
-      subsets.push([...subset, n]);
+  const result = [];
+  function helper(i, subsets) {
+    if (i === array.length) {
+      result.push(subsets);
+      return;
+    }
+    const num = array[i];
+    for (let set of subsets) {
+      helper(i + 1, set);
+      helper(i + 1, [...set, num]);
     }
   }
-
-  // this will go in two ways, one with the empty and one with the current number
-  return subsets;
+  helper(0, [[]]);
+  return result;
 };
 
 // console.log(`Here is the list of subsets: ${find_subsets([1, 3])}`);

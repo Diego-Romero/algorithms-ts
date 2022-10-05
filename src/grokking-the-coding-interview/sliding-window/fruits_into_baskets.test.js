@@ -20,26 +20,35 @@ This can be done if we start with the second letter: ['B', 'C', 'B', 'B', 'C']
 
 */
 
-// approach in O(N) time | O(1) space
+/**
+ * This follows the same pattern as the moving window, where we can move a pointer from the left and right
+ * with the aim of having a O(N) runtime and O(1) space
+ */
 const fruits_into_baskets = function (fruits) {
-  // iterate from left to right, adding the count to the right, whenever we have 3 keys, we need to remove from the left, until we can delete a char
   const map = {};
-  let max = 0;
-  let left = 0;
-  for (let right = 0; right < fruits.length; right++) {
-    let fruit = fruits[right];
-    if (map[fruit]) map[fruit]++;
-    else map[fruit] = 1;
+  let start = 0,
+    unique = 0,
+    max = 0;
 
-    while (Object.keys(map).length > 2) {
-      // reduce the keys
-      fruit = fruits[left];
-      map[fruit]--;
-      if (map[fruit] <= 0) delete map[fruit];
-      left++;
+  for (let end = 0; end < fruits.length; end++) {
+    const endChar = fruits[end];
+    if (!map[endChar]) {
+      map[endChar] = 0;
+      unique++;
     }
 
-    max = Math.max(right - left + 1);
+    if (unique > 2) {
+      // remove from the left
+      const startChar = map[start];
+      map[startChar] -= 1;
+      if (map[startChar] === 0) {
+        unique--;
+        delete map[startChar];
+      }
+      start++;
+    }
+
+    max = Math.max(max, end - start + 1);
   }
 
   return max;

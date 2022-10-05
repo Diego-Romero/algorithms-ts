@@ -82,27 +82,31 @@ max = 4
  012345
 */
 const longest_substring_with_k_distinct = function (str, k) {
-  let charFreq = {};
-	let left = 0;
-	let longest = 0;
-	
-	for (let right = 0; right < str.length; right++) {
-		const rightChar = str[right];
-		if (!charFreq[rightChar]) {
-			charFreq[rightChar] = 1;
-		} else charFreq[rightChar]++;
+  const map = {};
+  let start = 0,
+    distinct = 0,
+    longest = 0;
 
-		while (Object.keys(charFreq).length > k) {
-				const leftChar = str[left];
-				charFreq[leftChar] -= 1;
-        if (charFreq[leftChar] === 0) delete charFreq[leftChar];
-				left++;
-		}
+  for (let end = 0; end < str.length; end++) {
+    const endChar = str[end],
+      startChar = str[start];
+    if (!map[endChar]) {
+      distinct++;
+      map[endChar] = 0;
+    }
+    map[endChar] = map[endChar] + 1; // does map[endChar]++ works?
+    while (distinct > k) {
+      map[startChar] = map[startChar] - 1;
+      if (map[startChar] === 0) {
+        distinct--;
+        delete map[startChar];
+      }
+      start++;
+    }
+    longest = Math.max(longest, right - left + 1);
+  }
 
-		longest = Math.max(longest, right - left + 1);
-	}
-
-	return longest;
+  return longest;
 };
 
 describe("longest substring with k distinct", () => {

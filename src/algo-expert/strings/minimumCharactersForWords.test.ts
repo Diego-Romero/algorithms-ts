@@ -1,57 +1,60 @@
-// O(W*C) time | space, where W is each word and C is the characters of the longest word
-type FrequencyMap = { [type: string]: number };
-export function minimumCharactersForWords(words: string[]) {
-  const result: string[] = [];
-  const map: FrequencyMap = {};
+/*
+Write a function that takes an array of words and returns the smallest array of characters needed to form all of the words. They don't need to be in any particular order.
 
+
+Clarifiying questions:
+- Do we need to handle spaces?
+- Can the strings contain special characters and do we need to account for them?
+- Can we receive an empty array? yes
+- Can we receive an empty string? yes
+
+
+Approach:
+Brute force:
+- for every word we need to draw a frequency map of the chars that exist, {t: 1, h: 1, i: 1, s: 1}
+- We also need to keep track of the overall chars that we have collected thus far.
+- Whenever our local frequency map collects a number that is bigger than the one in our global map then we have to increase that number by one
+- At the end we have to iterate through our global map adding the count of chars to the result array.
+*/
+
+// O(W * C) time, where W are the words and C is the length of the longest word.
+// O(W * C) space
+export function minimumCharactersForWords(words: string[]): string[] {
+  type FrequencyMap = { [key: string]: number };
+  const global: FrequencyMap = {};
   for (let word of words) {
-    const current: FrequencyMap = {};
+    const local: FrequencyMap = {};
     for (let char of word.split("")) {
-      if (current[char]) current[char]++;
-      else current[char] = 1;
-    }
-    console.log(current);
-    for (let [key, value] of Object.entries(current)) {
-      if (map[key]) {
-        map[key] = Math.max(map[key], value);
-      } else {
-        map[key] = value;
-      }
+      if (!local[char]) local[char] = 0;
+      if (!global[char]) global[char] = 0;
+      local[char] += 1;
+      global[char] = Math.max(global[char], local[char]);
     }
   }
-  for (let [key, value] of Object.entries(map)) {
-    for (let i = 0; i < value; i++) result.push(key);
+
+  const result: string[] = [];
+  for (let [key, count] of Object.entries(global)) {
+    for (let i = 0; i < count; i++) result.push(key);
   }
-  // Write your code here.
+
   return result;
 }
 
-describe("minimun characters for words", () => {
-  test("should work", () => {
-    const array = ["this", "that", "did", "deed", "them!", "a"];
-    console.log(minimumCharactersForWords(array));
+describe("minimum characters for words", () => {
+  test("should work with an empty array", () => {
+    expect(minimumCharactersForWords([])).toEqual([]);
+  });
+  // test("should work with an empty word", () => {
+  //   expect(minimumCharactersForWords([""])).toEqual([""]);
+  // });
+
+  /**
+   * {t: 2, h: 1, i: 1, s: 1, a: 1}
+   * {t: 2, h: 1, a: 1}
+   */
+  test("should work with a few words", () => {
+    const input = "this that did deed them! a".split(" ");
+    const result = "t t h i s a d d e e m !".split(" ");
+    expect(minimumCharactersForWords(input)).toEqual(result);
   });
 });
-
-/**
-["this", "that", "did", "deed", "them!", "a"]
-[t, h, i, s, a, t, d, d, e, e, m, !]
-// need to find a way to compare 2 word frequency maps
-// need to keep updating to the second map, the highest number from the current map
-{
-	t: 1,
-	h: 1,
-	i: 1,
-	s: 1,
-	a: 1,
-}
-
-
-Write a function that will take an array of words and returns the smallest array of characters needed to form all the words
-
-brute force solution:
-- iterate through all the words, put the chars in a set, return the letters in the set
-O(W * M) time and space, W is words and M is the number of chars in the longest word
-
-
-*/

@@ -9,49 +9,56 @@ class AncestralTree {
   }
 }
 
+/**
+ * Question: We would like the youngest common ancestor between two nodes. This is the first ancestor that is a parent or equal to both.
+ * 
+ * Clarifying Question:
+ * - Can all the nodes be the same one? 
+ * - Could we do the comparison by the name of each node? 
+ * 
+ * examples:
+  - drawed in the ipad
+
+  Approach:
+  - Get the depth of both nodes in the graph.
+  - move the Node with the lowest depth up, until we have reached the same depth, from that point see if they are the same and if not keep moving up one level at the time.
+ */
+
+// O(N) time as the worse case scenario is that the tree looks like a graph. O(1) space.
 export function getYoungestCommonAncestor(
   top: AncestralTree,
   one: AncestralTree,
   two: AncestralTree
 ) {
-  let result: AncestralTree = top;
-
-  function getDepth(node: AncestralTree): number {
-    let count = 0;
-    while (node.ancestor !== null) {
-      count++;
-      node = node.ancestor;
-    }
-    return count;
+  let oneDepth = 0,
+    twoDepth = 0;
+  let iterator = one;
+  while (iterator.ancestor !== null) {
+    oneDepth++;
+    iterator = iterator.ancestor;
   }
-  let d1 = getDepth(one);
-  let d2 = getDepth(two);
-  let i1: AncestralTree | null = one;
-  let i2: AncestralTree | null = two;
-  console.log(d1, d2);
-  // figure out the smallest, and make them equal
-  while (d1 > d2) {
-    i1 = i1.ancestor!;
-    d1--;
-  }
-  while (d2 > d1) {
-    i2 = i2.ancestor!;
-    d2--;
-  }
-  console.log(i1, i2);
-  while (i1.name !== i2.name) {
-    i1 = i1.ancestor!;
-    i2 = i2.ancestor!;
+  iterator = two;
+  while (iterator.ancestor !== null) {
+    twoDepth++;
+    iterator = iterator.ancestor;
   }
 
-  return i1;
+  let oneIterator = one,
+    twoIterator = two;
+  // need to put them side to side
+  while (oneDepth > twoDepth && oneIterator.ancestor !== null) {
+    oneIterator = oneIterator.ancestor;
+    oneDepth--;
+  }
+  while (twoDepth > oneDepth && twoIterator.ancestor !== null) {
+    twoIterator = twoIterator.ancestor;
+    twoDepth--;
+  }
+
+  // both iterators are at the same level.
+  while (oneIterator !== twoIterator) {
+    oneIterator = oneIterator.ancestor!;
+    twoIterator = twoIterator.ancestor!;
+  }
+  return oneIterator;
 }
-
-/**
-Approach:
-- get level of each node
-
-
-- 2 possible cases, either the current node is one of the descendants, 
-but we can only start from one of the children;
-*/

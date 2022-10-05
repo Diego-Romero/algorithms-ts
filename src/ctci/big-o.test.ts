@@ -153,3 +153,187 @@ describe("Logarithmic runtime", () => {
     });
   });
 });
+
+/**
+ * Quadratic time O(N ^ 2)
+ * This is a pretty bad time, some examples of this are bubble sort, insertion sort, selection sort.
+ */
+
+function quadraticTime(array: number[]) {
+  array.forEach((n) => {
+    array.forEach((m) => {
+      console.log(n * m);
+    });
+  });
+}
+
+const matrix: number[][] = [
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+];
+
+/**
+ * Bubble sort works by swapping the values if they are out of order, until there are no swaps to be done
+ * it works in O(N ^ 2) run time and O(1) space.
+ */
+function bubbleSort(array: number[]) {
+  let isSorted = false;
+  while (!isSorted) {
+    isSorted = true;
+    for (let i = 0; i < array.length - 1; i++) {
+      const current = array[i],
+        next = array[i + 1];
+      if (next < current) {
+        swap(array, i, i + 1);
+        isSorted = false;
+      }
+    }
+  }
+}
+
+function swap(array: number[], i: number, j: number) {
+  // const cached = array[j];
+  // array[j] = array[i];
+  // array[i] = cached;
+  [array[i], array[j]] = [array[j], array[i]];
+}
+
+describe("sorting in quadratic time", () => {
+  let unsortedArray: number[];
+  const sorted = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  beforeEach(() => {
+    unsortedArray = [8, 6, 3, 4, 2, 9, 1, 5, 7];
+  });
+  test("bubble sort", () => {
+    bubbleSort(unsortedArray);
+    expect(unsortedArray).toEqual(sorted);
+  });
+});
+
+/*
+Linearithmic runtime O(N log N).
+This is more efficient than a quadratic runtime O(N ^ 2), and a good example of this is merge sort and quick sort.
+*/
+
+/*
+Merge sort works by splitting the arrays first and then merging two arrays together in a sorted fashion
+O(N log N) runtime, O(N) space.
+ */
+
+function mergeSort(initial: number[]): number[] {
+  function helper(array: number[]): number[] {
+    if (array.length <= 1) return array;
+    const middle = Math.floor(array.length / 2);
+    const leftArray = array.slice(0, middle);
+    const rightArray = array.slice(middle);
+    const left = helper(leftArray);
+    const right = helper(rightArray);
+    const result = mergeSortedArrays(left, right);
+    return result;
+  }
+  // todo: re write merge sort
+  return helper(initial);
+}
+
+function mergeSortedArrays(a1: number[], a2: number[]): number[] {
+  let p1 = 0,
+    p2 = 0;
+  const result = [];
+  while (p1 < a1.length || p2 < a2.length) {
+    const a1Value = a1[p1];
+    const a2Value = a2[p2];
+    if (p1 === a1.length) {
+      result.push(a2Value);
+      p2++;
+    } else if (p2 === a2.length) {
+      result.push(a1Value);
+      p1++;
+    } else {
+      if (a1Value <= a2Value) {
+        result.push(a1Value);
+        p1++;
+      } else {
+        result.push(a2Value);
+        p2++;
+      }
+    }
+  }
+  return result;
+}
+
+describe("Sorting in Linearithmic time O(N log N)", () => {
+  let unsortedArray: number[];
+  const sorted = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  beforeEach(() => {
+    unsortedArray = [8, 6, 3, 4, 2, 9, 1, 5, 7];
+  });
+
+  test("merge sorted arrays", () => {
+    const result = mergeSortedArrays([1, 3, 5], [2, 4, 6]);
+    console.log(result);
+    expect(result).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  test("Merge sort", () => {
+    const result = mergeSort(unsortedArray);
+    expect(result).toEqual(sorted);
+  });
+});
+
+/*
+Exponential runtime: O(2 ^ N)
+When this happens the runtime increases exponentially in relation to the size of the input.
+Fibonacci is a good example of this.
+*/
+
+// runtime: O(2 ^ N) N being the amount of branches in the recursive tree, space: O(N)
+function fibonacci(n: number): number {
+  if (n <= 1) return 1;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+function memoizedFibonacci(n: number): number {
+  const cache = new Map<number, number>([
+    [1, 1],
+    [0, 1],
+  ]);
+  function helper(number: number): number {
+    if (cache.has(number)) return cache.get(number)!;
+    const value = helper(number - 1) + helper(number - 2);
+    cache.set(number, value);
+    return value;
+  }
+  return helper(n);
+}
+
+describe("Exponential runtime", () => {
+  describe("Fibonacci", () => {
+    test("3rd number", () => {
+      expect(fibonacci(3)).toEqual(3);
+    });
+    test("4th number", () => {
+      expect(fibonacci(4)).toEqual(5);
+    });
+    test("5th number", () => {
+      expect(fibonacci(5)).toEqual(8);
+    });
+  });
+  describe("Memoized Fibonacci", () => {
+    test("3rd number", () => {
+      expect(memoizedFibonacci(3)).toEqual(3);
+    });
+    test("4th number", () => {
+      expect(memoizedFibonacci(4)).toEqual(5);
+    });
+    test("6th number", () => {
+      expect(memoizedFibonacci(6)).toEqual(13);
+    });
+    test("7th number", () => {
+      expect(memoizedFibonacci(7)).toEqual(21);
+    });
+  });
+});
+
+/*
+Now, there is a trick that we can apply to recursive functions which could seriously optimize the runtime, which is memoization
+*/

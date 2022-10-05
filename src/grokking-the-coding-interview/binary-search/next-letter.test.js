@@ -28,40 +28,61 @@ Output: 'a'
 Explanation: As the array is assumed to be circular, the smallest letter greater than 'h' is 'a'.
 */
 
-// O(Log N) time | O(N) space
+/**
+ * Constrains:
+ * - Sorted by the smallest letter.
+ * - All lowercase letters.
+ * - Find the smallest letter in the given array greater than a given key
+ * - Assume that the array is a circular list, meaning that the last letter is connected with the first
+ */
 const search_next_letter = function (letters, key) {
-  // binary search, but convert the letters into numbers
-  const numbers = [];
+  // check for valid input, etc.
+  let leftIdx = 0,
+    rightIdx = letters.length - 1;
   const keyNumber = key.charCodeAt(0);
-  for (let i = 0; i < letters.length; i++)
-    numbers.push(letters[i].charCodeAt(0));
-
-  console.log(numbers, keyNumber);
-
-  let left = 0,
-    right = numbers.length - 1;
-
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    const midNumber = numbers[mid];
-    // find the letter that is greater than the key
-    // reach the point where we only have one
-    if (left === right) {
-      // either we are at the last index, or not
-      return returnCorrectIndex(mid);
-    }
-    if (keyNumber > midNumber) left = mid + 1;
-    else if (keyNumber < midNumber) right = mid - 1;
-    else return returnCorrectIndex(mid);
+  while (leftIdx <= rightIdx) {
+    const midIdx = Math.floor((rightIdx + leftIdx) / 2);
+    const midChar = letters[midIdx];
+    const midNumber = midChar.charCodeAt(0);
+    if (keyNumber > midNumber) leftIdx = midIdx + 1;
+    else if (keyNumber < midNumber) rightIdx = midIdx - 1;
+    else {
+      leftIdx = midIdx;
+      rightIdx = midIdx;
+      break;
+    } // we have found the exact number
   }
-  function returnCorrectIndex(mid) {
-    if (mid + 1 === letters.length) return letters[0];
-    return letters[mid + 1];
-  }
-
-  return letters[0];
+  // 3 ways to deal with it, if left is smaller than right
+  if (rightIdx < 0 || leftIdx >= letters.length - 1) return letters[0];
+  return letters[leftIdx + 1];
 };
 
-console.log(search_next_letter(["a", "c", "f", "h"], "f")); // h
-console.log(search_next_letter(["a", "c", "f", "h"], "b")); // c
-console.log(search_next_letter(["a", "c", "f", "h"], "m")); // a, as the list is circular
+// console.log(search_next_letter(["a", "c", "f", "h"], "f")); // h
+// console.log(search_next_letter(["a", "c", "f", "h"], "b")); // c
+// console.log(search_next_letter(["a", "c", "f", "h"], "m")); // a, as the list is circular
+
+describe("next letter", () => {
+  test("test 1", () => {
+    expect(search_next_letter(["b", "c", "f", "h"], "f")).toEqual("h");
+    //                          l
+    //                       r
+    //                          m
+  });
+
+  test("test 2", () => {
+    expect(search_next_letter(["a", "c", "f", "h"], "h")).toEqual("a");
+  });
+
+  test("test 3", () => {
+    expect(search_next_letter(["a", "c", "f", "h"], "b")).toEqual("c");
+    /**
+     *                               l
+     *                          r
+     *                               m
+     */
+  });
+
+  test("test 4", () => {
+    expect(search_next_letter(["a", "c", "f", "h"], "m")).toEqual("a");
+  });
+});

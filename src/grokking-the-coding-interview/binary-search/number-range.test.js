@@ -19,46 +19,60 @@ Output: [-1, -1]
 
 */
 
+// constrains: array can have dups, sorted in ascending order, if target is not present return -1.
 const find_range = function (array, target) {
-  // do a binary search to see if we can find the start
-  const index = binarySearch(array, target, 0, array.length - 1);
-  // console.log("initial index", index);
-  if (index === -1) return [-1, -1];
-  let startIndex = index;
-  while (true) {
-    const result = binarySearch(array, target, 0, startIndex - 1);
-    if (result === -1) break;
-    startIndex = result;
-  }
-  // console.log("start index", startIndex);
-  let endIndex = index;
-  while (true) {
-    const result = binarySearch(array, target, endIndex + 1, array.length - 1);
-    console.log(result);
-    if (result === -1) break;
-    endIndex = result;
-  }
-  // console.log("end index", endIndex);
-  return [startIndex, endIndex];
+  // goal is to avoid O(N) and just do this doing binary search in O(Log N).
+  // approach: do a binary search to find the start, then another binary search to find the end (each of them will be slightly different)
+  const result = [-1, -1];
+  const start = (result[0] = binarySearch(array, target, true));
+  if (start === -1) return result;
+  result[1] = binarySearch(array, target, false);
+  return result;
 };
 
-// returns the index of the found number
-function binarySearch(array, target, start, end) {
-  let left = start;
-  right = end;
-
+// return the index of the smallest or the largest value in the array.
+function binarySearch(array, target, findSmallest) {
+  let left = 0,
+    right = array.length - 1;
   while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-    const midN = array[mid];
-    if (midN == target) return mid;
-
-    if (target < midN) right = mid - 1;
-    else if (target > midN) left = mid + 1;
+    const mid = Math.floor((right + left) / 2);
+    if (target > array[mid]) left = mid + 1;
+    else if (target < array[mid]) right = mid - 1;
+    else {
+      if (findSmallest) {
+        if (mid === 0 || array[mid - 1] !== array[mid]) return mid;
+        else right = mid - 1;
+      } else {
+        if (mid === array.length - 1 || array[mid + 1] !== array[mid])
+          return mid;
+        else left = mid + 1;
+      }
+      // 2 options, either there is not a the same number behind, in which case we have found the smallest index
+      // or there is the same number behind, in which case we would like to binary search again reducing the right index by mid - 1;
+    }
   }
 
   return -1;
 }
 
-console.log(find_range([4, 6, 6, 6, 6, 6, 9], 6)); // [1, 5]
-console.log(find_range([1, 3, 8, 10, 15], 10)); // [3, 3]
-console.log(find_range([1, 3, 8, 10, 15], 12)); // [-1, -1]
+/**
+ * Remember is possible to break down problems into really easy examples and then elaborate from there.
+ */
+
+describe("find range", () => {
+  it("should work 1", () => {
+    expect(find_range([4, 6, 6, 6, 6, 6, 9], 6)).toEqual([1, 5]);
+    /**
+     *                             l
+     *                                   r
+     *                           m
+     */
+  });
+
+  it("should work 2", () => {
+    expect(find_range([1, 3, 8, 10, 15], 10)).toEqual([3, 3]);
+  });
+  it("should work 3", () => {
+    expect(find_range([1, 3, 8, 10, 15], 12)).toEqual([-1, -1]);
+  });
+});

@@ -1,50 +1,30 @@
 function currying(func) {
-  // until I get 3 arguments, keep returning a function
-  function recurse(...params) {
-    console.log(params);
-    if (params.length === 3) {
-      return func(...params);
-    } else {
-      return function (...next) {
-        return recurse(...params, ...next);
-      };
-    }
+  function currying(...args) {
+    if (args.length >= func.length) return func(...args);
+    return function (...next) {
+      return currying(...args, ...next);
+    };
   }
-
-  return recurse;
+  return currying;
 }
 
-const multiply3Numbers = (a, b, c) => a * b * c;
-const output = currying(multiply3Numbers);
-console.log(output(2)(3)(4));
+describe("currying function", () => {
+  const multiply3Numbers = (a, b, c) => a * b * c;
+  test("it should work with separate parameters", () => {
+    const func = currying(multiply3Numbers);
+    const result = func(2)(3)(2);
+    expect(result).toEqual(12);
+  });
 
-// describe("writting my own currying function", () => {
-//   const multiply3Numbers = (a, b, c) => a * b * c;
-//   test("should work", () => {
-//     const output = currying(multiply3Numbers);
-//     console.log(output(2, 3, 4));
-//   });
+  test("it should work with separate parameters", () => {
+    const func = currying(multiply3Numbers);
+    const result = func(2, 3)(2);
+    expect(result).toEqual(12);
+  });
 
-//   test("should test object freeze", () => {
-//     "use strict";
-//     let person = {
-//       name: "Nishant",
-//     };
-//     Object.freeze(person);
-//     Object.seal(person);
-
-//     function func() {
-//       try {
-//         person.name = "xyz";
-//       } catch (e) {
-//         console.log("Cannot change the name");
-//       }
-//       person.age = 30;
-//       delete person.name;
-//       console.log(person.name);
-//       console.log(person.age);
-//       console.log(person.name);
-//     }
-//     console.log(func());
-//   });
-// });
+  test("it should work with separate parameters 2", () => {
+    const func = currying(multiply3Numbers);
+    const result = func(2, 3, 2);
+    expect(result).toEqual(12);
+  });
+});
