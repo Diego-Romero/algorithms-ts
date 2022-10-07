@@ -38,7 +38,7 @@ export function minimumCharactersForWords(words: string[]): string[] {
   }
 
   return result;
-}
+
 
 describe("minimum characters for words", () => {
   test("should work with an empty array", () => {

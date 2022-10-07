@@ -1,49 +1,41 @@
-// // iterative solution in O(n!)
-// export function getPermutations(array: number[]) {
-//   if (!array.length) return [];
-//   const permutations: number[][] = [[]];
-//   for (let n of array) {
-//     // need to iterate through all the elements of the permutations, inserting at every position
-//     const size = permutations.length;
-//     for (let i = 0; i < size; i++) {
-//       const current = permutations.shift()!;
-//       for (let j = 0; j <= current.length; j++) {
-//         const copy = [...current];
-//         copy.splice(j, 0, n);
-//         permutations.push(copy);
-//       }
-//     }
-//     console.log(n, permutations);
-//   }
-
-//   return permutations;
-// }
-
-export function getPermutations(
-  array: number[],
-  index: number = 0,
-  permutations: number[][] = [[]]
-): number[][] {
-  console.log(array[index], permutations);
-  if (index === array.length) {
-    return permutations;
-  }
-  // need to insert the current in every position of the permutations
-  const n = array[index];
-  const newPermutations: number[][] = [];
-  for (let permutation of permutations) {
-    for (let i = 0; i <= permutation.length; i++) {
-      const copy = [...permutation];
-      copy.splice(i, 0, n);
-      newPermutations.push(copy);
+/**
+Approach:
+- For the recursive approach we would like to insert each element at the current index.
+- We need to create an outside result array and an inner function (closure) that computes the value
+- we recursively keep adding the current element at every position in the array that we receive including 0 and after the last element.
+- whenever the index has reached the length of the array, we pushed the current array into our results
+*/
+export function getPermutations(input: number[]): number[][] {
+  const result: number[][] = [];
+  function recurse(index: number, array: number[]) {
+    if (index === input.length) result.push(array);
+    else {
+      // we want to insert this number at every position in the array, including the last one (we have to create a new array)
+      const current = input[index]; // 1
+      for (let i = 0; i <= array.length; i++) {
+        const copy = [...array];
+        copy.splice(i, 0, current);
+        recurse(index + 1, copy);
+      }
     }
   }
-  return getPermutations(array, index + 1, newPermutations);
+
+  recurse(0, []);
+  console.log(result);
+  return result;
 }
 
 describe("get permutations", () => {
-  test("should work", () => {
-    const array = [1, 2, 3];
-    console.log(getPermutations(array));
+  test("should get all the permutations", () => {
+    const input = [1, 2, 3];
+    const result = [
+      [1, 2, 3],
+      [1, 3, 2],
+      [2, 1, 3],
+      [2, 3, 1],
+      [3, 1, 2],
+      [3, 2, 1],
+    ];
+    expect(getPermutations(input)).toEqual(result);
   });
 });

@@ -18,16 +18,19 @@ export class BST {
   }
 }
 
+/*
+- We are guaranteed that K will be less than or equal the number of nodes
+*/
 export function findKthLargestValueInBst(tree: BST, k: number) {
-  const iot: number[] = [];
-  function traverse(node: BST | null) {
+  const inOrderTraversal: number[] = [];
+  function recurse(node: BST | null) {
     if (node === null) return;
-    traverse(node.left);
-    iot.push(node.value);
-    traverse(node.right);
+    recurse(node.left);
+    inOrderTraversal.push(node.value);
+    recurse(node.right);
   }
-  traverse(tree);
-  return iot[iot.length - k]
+  recurse(tree);
+  return inOrderTraversal[inOrderTraversal.length - k];
 }
 
 describe("find kth largest value in BST", () => {

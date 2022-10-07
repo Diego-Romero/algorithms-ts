@@ -1,30 +1,31 @@
-// every time we double the amount of N, the Big O is 2 ^ N
-// runtime: O(N * 2 ^ N) time as well as space, because 2^N is the number of sets that we have and each set can be up to N
-export function powerset(array: number[]) {
-  let queue: number[][] = [[]];
-
-  for (let n of array) {
-    const size = queue.length;
-    for (let i = 0; i < size; i++) {
-      const copy = [...queue[i], n];
-      queue.push(copy);
+/**
+Approach:
+- Very similar to doing a recursive approach for getting all the permutations
+- start with an empty set, with every call we need to do one with the current set that we have, and another one with the current number added, 
+Whenever we reach the index that is the same as the array.length, then we push the current set into the result array. We could use a closure for this.
+*/
+export function powerset(input: number[]): number[][] {
+  const result: number[][] = [];
+  function recurse(index: number, array: number[]) {
+    if (index === input.length) result.push(array);
+    else {
+      // we need to add the current number to this array as well as pass the array untouched
+      const current = input[index];
+      const copy = [...array];
+      copy.push(current);
+      recurse(index + 1, array);
+      recurse(index + 1, copy);
     }
   }
-
-  return queue;
+  recurse(0, []);
+  console.log(result);
+  return result;
 }
 
-/**
-- grabs an array of unique integers, returns powerset
-
-[] = []
-[1] = [], [1]
-[1, 2] = [], [1], [2], [1, 2]
-etc.
-
-- steps:
-create a queue, that has an empty array
-
-
-
-*/
+describe("power sets", () => {
+  test("should should work", () => {
+    const input = [1, 2, 3];
+    const result: number[][] = [];
+    expect(powerset(input)).toEqual(result);
+  });
+});

@@ -1,30 +1,24 @@
-/**
- * Write a function that takes in a non empty sorted array of distinct integers, constructs a BST from integers and returns the root of the BST. The function should minimize the height of the BST.
- */
-
 import { inOrderTraverse } from "./bst-traversal.test";
 
+/*
+Use a binary search approach to keep inserting the middles out of each side, that way we can always guarantee that the array inserts left and right from this point.
 
+Examples:
+- needs to work with an array with no elements
+- with one element
+- a normal sorted array
+- array with two elements
+*/
 export function minHeightBst(array: number[]) {
-  const insertOrder: number[] = [];
-  function insertIntoTree(left: number, right: number) {
-    if (left > right) return;
-    let mid = Math.floor((left + right) / 2);
-    // console.log(left, right, mid, array[mid])
-    insertOrder.push(array[mid])
-    insertIntoTree(left, mid -1)
-    insertIntoTree(mid + 1, right)
+  function recurse(start: number, end: number) {
+    if (start > end) return null;
+    const mid = Math.floor((end + start) / 2);
+    const newNode = new BST(array[mid]);
+    newNode.left = recurse(start, mid - 1);
+    newNode.right = recurse(mid + 1, end);
+    return newNode;
   }
-  insertIntoTree(0, array.length - 1);
-  // console.log(insertOrder)
-  let head: BST | null = null;
-  for (let n of insertOrder) {
-    if (head === null) head = new BST(n)
-    else {
-      head.insert(n)
-    }
-  }
-  return head;
+  return recurse(0, array.length - 1);
 }
 
 export class BST {
@@ -55,11 +49,10 @@ export class BST {
   }
 }
 
-describe('minimum height BST', () => {
-  test('should return a BST with the min possible height', () => {
-      const minHeight = minHeightBst([1,2,5,7,10,13,14,15,22])
-      const iot = inOrderTraverse(minHeight, [])
-      expect(iot).toEqual([1,2,5,7,10,13,14,15,22])
-  })
-  
-})
+describe("minimum height BST", () => {
+  test("should return a BST with the min possible height", () => {
+    const minHeight = minHeightBst([1, 2, 5, 7, 10, 13, 14, 15, 22]);
+    const iot = inOrderTraverse(minHeight, []);
+    expect(iot).toEqual([1, 2, 5, 7, 10, 13, 14, 15, 22]);
+  });
+});
