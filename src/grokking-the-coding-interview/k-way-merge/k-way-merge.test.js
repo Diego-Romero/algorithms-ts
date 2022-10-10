@@ -87,22 +87,8 @@ function MAX_HEAP_FUNC(a, b) {
   return a > b;
 }
 function MIN_HEAP_FUNC(a, b) {
-  return a[0].value < b[0].value;
+  return a < b;
 }
-
-/*
-Problem Statement ##
-Given an array of ‘K’ sorted LinkedLists, merge them into one sorted list.
-
-Example 1:
-
-Input: L1=[2, 6, 8], L2=[3, 6, 7], L3=[1, 3, 4]
-Output: [1, 2, 3, 3, 4, 6, 6, 7, 8]
-Example 2:
-
-Input: L1=[5, 8, 9], L2=[1, 7]
-Output: [1, 5, 7, 8, 9]
-*/
 
 class ListNode {
   constructor(value, next = null) {
@@ -111,59 +97,50 @@ class ListNode {
   }
 }
 
-/*
-use a heap to keep track of the head of every list, as well as the index of that list, whenever we pop it, we just get the next number of that list
-*/
+// This pattern is about using a heap to keep track of the lowest value node in the lists that we are merging.
+// at the same time we have to keep track of which list the element came from.
 
-// space O(K) k being the amount of lists we have
-// time O(N log K) N being the total number of elements in the array, as we are inserting every element into the heap (log N)
 const merge_lists = function (lists) {
-  const preHead = new ListNode(null);
-  let iterator = null;
-  const minHeap = new Heap([], MIN_HEAP_FUNC);
-  // put the first element of all the lists
-  for (let i = 0; i < lists.length; i++) {
-    const list = lists[i];
-    if (list !== null) minHeap.insert([list, i]);
+  // should also check that the list is not empty.
+  let preHead = new ListNode(null);
+  let iterator = preHead;
+  let minHeap = new Heap([], (a, b) => a.value - b.value);
+  for (let head of lists) {
+    minHeap.insert(head);
   }
-
-  console.log(minHeap);
-
-  while (minHeap.heap.length > 0) {
-    const [node, index] = minHeap.remove();
-    console.log(node.value, index);
-    if (preHead.next === null) {
-      preHead.next = node;
-      iterator = node;
-    } else {
-      iterator.next = node;
-      iterator = iterator.next;
-    }
-    if (node.next !== null) {
-      console.log("inserting", node.value, index);
-      minHeap.insert([node.next, index]);
-    }
+  preHead.next = minHeap.peek(); // we should make the lowest value in the heap the next one
+  // iterate as long as we have a value in the heap
+  while (minHeap.peek()) {
+    const top = minHeap.remove();
+    if (top.next !== null) minHeap.insert(top.next);
+    iterator.next = top;
+    iterator = top;
   }
-
   return preHead.next;
 };
 
-l1 = new ListNode(2);
-l1.next = new ListNode(6);
-l1.next.next = new ListNode(8);
+describe("k way merge", () => {
+  test("should work with a few lists", () => {
+    l1 = new ListNode(2);
+    l1.next = new ListNode(6);
+    l1.next.next = new ListNode(8);
 
-l2 = new ListNode(3);
-l2.next = new ListNode(6);
-l2.next.next = new ListNode(7);
+    l2 = new ListNode(3);
+    l2.next = new ListNode(6);
+    l2.next.next = new ListNode(7);
 
-l3 = new ListNode(1);
-l3.next = new ListNode(3);
-l3.next.next = new ListNode(4);
+    l3 = new ListNode(1);
+    l3.next = new ListNode(3);
+    l3.next.next = new ListNode(4);
 
-result = merge_lists([l1, l2, l3]);
-output = "Here are the elements form the merged list: ";
-while (result != null) {
-  output += result.value + " ";
-  result = result.next;
-}
-console.log(output);
+    let result = merge_lists([l1, l2, l3]);
+    let output = "";
+    while (result != null) {
+      output += result.value + " ";
+      result = result.next;
+    }
+    console.log(output);
+    expect(result).toEqual("1 2 3 3 4 6 6 7 8");
+    q;
+  });
+});
