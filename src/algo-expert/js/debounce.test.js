@@ -1,25 +1,33 @@
 /**
- * Need to call the debounce function after n amount of seconds have passed in the delay parameter.
- * If the immediate flag is set to true, it should trigger the callback function, but only the first time around - then it should call it again only after the delay has passed.
- * We should return the debounce function after it has been called again every time.
- *
- * Note, we should also have the this context of the debounced function callers here.
- */
+Calling the debounce function should return a new debounced version of the callback function, which takes in the same parameter
+as the calback, and which, when executed should call the callback after 'delay' in milliseconds ahve passed since
+the last call to this debounced function.
 
-// if the function gets called again. we need to remove the timeout that is already in place and start it over
-// in this case every time the user types we are calling this debounce function.
 
+- Need to have a set timeout that will be triggered after the delay.
+- whenever this function is called again, I need to reset that timeout and start over, if the timeout
+finally expires I need to call the callback function
+- This needs to return a function that needs to be called with the callback that we are provided
+- I need to bind the this context into how the function is called
+
+
+*/
 function debounce(callback, delay, immediate = false) {
-  let timerId;
+  let timeout;
+  let shouldCallImmediately = immediate;
 
-  return function (...args) {
-    // in this case we need to use an anonymous function and not an arrow function to keep the 'this' context of this right
-    clearTimeout(timerId);
-    if (immediate) callback.apply(this, ...args);
-    timerId = setTimeout(() => {
-      callback.apply(this, ...args);
+  return (...params) => {
+    if (timeout) clearTimeout(timeout);
+    if (shouldCallImmediately) {
+      callback.apply(this, params); // binding the this context to the callback function
+      shouldCallImmediately = false;
+    }
+
+    timeout = setTimeout(() => {
+      callback.apply(this, params); // binding the this context to the callback function
     }, delay);
   };
 }
 
+// Do not edit the line below.
 exports.debounce = debounce;

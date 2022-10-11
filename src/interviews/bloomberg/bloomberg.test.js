@@ -1,37 +1,35 @@
 /**
- * We can receive any amount of empty parenthesis, and at the very end we will receive a string, that is when we have finished the string. We will append a O for every empty curried call to the function.
+ * Write a function that curries along the way.
+ * The function should ultimately return a string, it should start with bl and for any mount of empty parameter calls to the function, it should
+ * append o's, as soon as it receives a string as a parameter it should return bl + number of empty calls + the string.
+ *
+ * Clarifying questions:
+ * - Can I receive no calls with empty parameters? not for now
+ * - Should I also consider the edge case when I don't receive a string as a parameter? not for now
+ * - Is anything but a string also an acceptable input parameter? Can the string be empty?
+ * Examples:
  *
  * Approach:
- * - we need a way to count the o's being added.
- * - we need a recursive function
- * - We could use a closure as the recursive function and have a counter in the outer function
+ * - Record the string that we currently have, it should always start with the prefix of 'bl'
+ * - Return a function that receives a parameter, if we don't have a string as a parameter, then append a 'o' to our prefix.
+ * - If we receive a string as a parameter, add it to the prefix and return it.
  */
 
 // function bl() {
-//   let prefix = "bl";
-//   const recurse = (params) => {
-//     if (!params) {
-//       prefix += "o";
-//       return recurse;
-//     } else {
-//       return prefix + "o" + params;
-//     }
-//   };
-
+//   let prefix = "bl"; // bloo mberg
+//   // need to return a recursive function, we should stop as soon as we receive a string as an input parameter
+//   function recurse(string) {
+//     if (string) return prefix + string;
+//     prefix = prefix + "o";
+//     return recurse;
+//   }
 //   return recurse;
 // }
 
-// O(N) time, where N is the number of curried functions | O(N + S) space, where S is the length of the last string.
-function bl(input) {
-  let prefix = "bl";
-  const recurse = (params) => {
-    if (!params) {
-      prefix += "o";
-      return recurse;
-    }
-    return prefix + params;
-  };
-  return recurse(input);
+function bl(current = "", prefix = "bl") {
+  return current === ""
+    ? (string) => bl(string, (prefix += "o"))
+    : prefix + current;
 }
 
 // console.log(bl()()("mberg")); // bloomberg
@@ -39,24 +37,16 @@ function bl(input) {
 // console.log(bl()("mberg")); // blomberg
 
 describe("Bloomberg", () => {
-  test("should work with 2 empty parenthesis", () => {
-    const output = bl()()("mberg");
-    expect(output).toEqual("bloomberg");
+  test("should work with 2 empty calls", () => {
+    expect(bl()()("mberg")).toEqual("bloomberg");
   });
-  test("should work with 3 empty parenthesis", () => {
-    const output = bl()()()("mberg");
-    expect(output).toEqual("blooomberg");
+  test("should work with 3 empty calls", () => {
+    expect(bl()()()("mberg")).toEqual("blooomberg");
   });
-  test("should work with 1 empty parenthesis", () => {
-    const output = bl()("mberg");
-    expect(output).toEqual("blomberg");
+  test("should work with 1 empty calls", () => {
+    expect(bl()("mberg")).toEqual("blomberg");
   });
-  test("should work with 1 empty parenthesis", () => {
-    const output = bl("mberg");
-    expect(output).toEqual("blmberg");
+  test("should work with 0 empty calls", () => {
+    expect(bl("mberg")).toEqual("blmberg");
   });
-
-  // test that the input is a string?
-  // should it work without a string in the end?
-  // what if we receive a string in the middle? Should we make it work too?
 });
